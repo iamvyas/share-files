@@ -1,35 +1,26 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css'
+import Navbar from "./navbar/Navbar"
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import ChatBox from './pages/ChatBox';
+import Room from './pages/Room'
+import Home from './pages/Home'
 
 function App() {
-  const [file, setFile] = useState(null);
-
-  const handleChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await axios.post('http://localhost:8000/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(res.data);
-    } catch (err) {
-      console.error('Upload Error:', err);
-    }
-  }
 
   return (
-    <div>
-      <input type="file" onChange={handleChange} />
-      <button onClick={handleUpload}>Upload</button>
-    </div>
+    <>
+    <Navbar />
+    <Router>
+      <Routes>
+        <Route path="/chatbox" element={<ChatBox />} />
+        <Route path="/about" element={<Room />} />
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </Router>
+    </>
   );
 }
 

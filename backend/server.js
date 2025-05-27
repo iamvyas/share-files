@@ -13,8 +13,8 @@ let sample = [
     room: 2652,
     key: 6356,
     messages: [
-      { text: "blah", image: "null" },
-      { text: "blah", image: "null" }
+      { text: "blah", file: "null" },
+      { text: "blah", file: "null" }
     ]
   }
 ];
@@ -40,7 +40,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-  res.json({ message: 'Upload success', file: req.file });
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+  const { text } = req.body;
+  const savedFileName = req.file.filename; // e.g., 1716834123456-photo.png
+
+  sample[0].messages.push({ text, image: savedFileName });
+
+  res.json({
+    message: 'Upload success',
+    fileName: savedFileName,
+    updatedMessages: sample[0].messages
+  });
 });
 
 

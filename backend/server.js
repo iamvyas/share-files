@@ -13,8 +13,6 @@ let sample = [
     room: 2652,
     key: 6356,
     messages: [
-      { text: "blah", file: "null" },
-      { text: "blah", file: "null" }
     ]
   }
 ];
@@ -45,12 +43,20 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const { text } = req.body;
   const savedFileName = req.file.filename; // e.g., 1716834123456-photo.png
 
-  sample[0].messages.push({ text, image: savedFileName });
+  sample[0].messages.push({ text, file: savedFileName });
 
-  res.json({
-    message: 'Upload success',
-    fileName: savedFileName,
-    updatedMessages: sample[0].messages
+  res.json(sample[0]);
+});
+
+app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  res.download(filePath, filename, (err) => {
+    if (err) {
+      console.error("Download error:", err);
+      res.status(404).json({ error: "File not found or download failed" });
+    }
   });
 });
 
@@ -59,6 +65,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.get("/",(req,res)=>{
     testVar = "var changed"
     res.send("Hello World")
+})
+
+app.get("/msg",(req,res)=>{
+    res.json(sample[0]);
 })
 
 
